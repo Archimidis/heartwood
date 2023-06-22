@@ -327,6 +327,12 @@ fn run_other(exe: &str, args: &[OsString]) -> Result<(), Option<anyhow::Error>> 
             rad_remote::run,
             args.to_vec(),
         ),
+        "ci-broker" => term::run_command_args::<rad_ci_broker::Options, _>(
+            rad_ci_broker::HELP,
+            "CI broker",
+            rad_ci_broker::run,
+            args.to_vec()
+        ),
         _ => {
             let exe = format!("{NAME}-{exe}");
             let status = process::Command::new(exe.clone()).args(args).status();
