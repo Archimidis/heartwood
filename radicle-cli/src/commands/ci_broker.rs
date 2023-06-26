@@ -1,4 +1,5 @@
 use std::ffi::OsString;
+use std::process::Command;
 use std::time;
 
 use anyhow::anyhow;
@@ -107,4 +108,77 @@ fn show_patch_info(repository: &Repository, patch_id: &str) -> Result<Patch, any
     term::info!("Head {:?}", *patch.head());
 
     Ok(patch)
+}
+
+pub trait CI {
+    fn trigger_job(&self) -> Result<(), anyhow::Error>;
+}
+
+struct Concourse {
+    // pipeline_config_path: String,
+    // user: String,
+    // password: String,
+    // target: String,
+    // url: String,
+}
+
+impl CI for Concourse {
+    fn trigger_job(&self) -> Result<(), anyhow::Error> {
+        let output = Command::new("pwd").output()?;
+        println!("{}", String::from_utf8(output.stdout)?);
+
+        // fly -t tutorial login -c http://localhost:8080 -u test -p test
+        let output = Command::new("fly")
+            .args([
+                "-t", "tutorial",
+                "login",
+                "-c", "http://localhost:8080",
+                "-u", "test",
+                "-p", "test",
+            ])
+            .output()?;
+        println!("{}", String::from_utf8(output.stdout)?);
+        println!("{}", String::from_utf8(output.stderr)?);
+
+        // fly -t tutorial set-pipeline -p hello-world -c hello-world.yml
+        let output = Command::new("fly")
+            .args([
+                "-t", "tutorial",
+                "set-pipeline",
+                "-p", "hello-world",
+                "-c", "/Users/nikolas/Projects/rust/heartwood/radicle-cli/src/commands/hello-world.yml"
+            ])
+            .output()?;
+        println!("{}", String::from_utf8(output.stdout)?);
+        println!("{}", String::from_utf8(output.stderr)?);
+
+        // fly -t tutorial trigger-job --job hello-world/hello-world-job
+        let output = Command::new("fly")
+            .args([
+                "-t", "tutorial",
+                "trigger-job",
+                "--job", "hello-world/hello-world-job",
+            ])
+            .output()?;
+        println!("{}", String::from_utf8(output.stdout)?);
+        println!("{}", String::from_utf8(output.stderr)?);
+
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use anyhow::Error;
+
+    use crate::commands::rad_ci_broker::{CI, Concourse};
+
+    #[test]
+    fn hello() {
+        let ci = Concourse {};
+        match ci.trigger_job() {
+            Ok(_) => println!("everything went fine"),
+            Err(_) => println!("something went wrong"),
+        }
+    }
 }
