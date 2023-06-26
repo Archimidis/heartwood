@@ -1927,6 +1927,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "radicle-ci-broker"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "radicle-cob",
+ "radicle-term",
+]
+
+[[package]]
 name = "radicle-cli"
 version = "0.8.0"
 dependencies = [
