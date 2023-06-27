@@ -1931,6 +1931,7 @@ name = "radicle-ci-broker"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "radicle",
  "radicle-cob",
  "radicle-term",
 ]
