@@ -1986,6 +1986,7 @@ name = "radicle-ci-broker"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "crossbeam-channel",
  "hyper",
  "radicle",
  "radicle-cob",
